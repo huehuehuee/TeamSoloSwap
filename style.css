@@ -1,0 +1,55 @@
+.container{
+	width:100%;
+	margin:auto;
+	overflow:hidden;
+}
+body {
+	margin: 0px;
+}
+header {
+	color: #f5f5f5;
+	text-align: left;
+	background-color: lightblue;
+	font-size: 30px;
+	height: 60px;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0px;
+	text-decoration: none;
+}
+
+#header a {
+	text-decoration: none;
+	color: #f5f5f5;
+}
+
+#header ul {
+	padding: 0px;
+	margin-top: 0px;
+	list-style: none;
+}
+
+#header li {
+	display: inline;
+}
+
+#header li:nth-last-child(-n+2) {
+	float:right;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+section {
+	background-image:url('images/woodbg.jpg');
+	background-position:center left;
+	background-color: white;
+	min-height:400px;
+	padding-top:10px;
+}
+
+#main-footer{
+	background: #333;
+	color:#fff;
+	text-align: center;
+	padding:20px;
+	margin-top:0px;
+}

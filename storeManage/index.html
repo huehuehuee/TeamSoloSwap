@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Price Management</title>
+</head>
+<body>
+	<h2>Look at book pricing</h2>
+	<form action="viewPrice.php" method="post">
+			Show all
+			<input type="submit" name="submit" value="view">
+
+	</form>
+	<br>
+	<h2>Add in book pricing</h2>
+	<br>
+	<form action="addPrice.php" method="post">
+		serialNumber: <input type="number"  name="iserial" autocomplete="off">
+		costPrice: <input type="number" step="0.01" name="icost" autocomplete="off">
+		markUp: <input type="number" step="0.01" name="imark" autocomplete="off">%
+		<input type="submit" name="submit" value="Add">
+	</form>
+	<h2>Change book markUp</h2>
+	<form action="viewPrice.php" method="post">
+		serialNumber: <input type="number"  name="iserial" autocomplete="off">
+		markUp: <input type="number" step="0.01" name="imark" autocomplete="off">%
+		<input type="submit" name="submit" value="Add">
+	</form>
+	<br>
+	<h2>Remove book pricing</h2>
+	<form action="removePrice.php" method="post">
+		serialNumber: <input type="number"  name="iserial" autocomplete="off">
+		<input type="submit" name="submit" value="Add">
+	</form>
+	<br>
+</body>
+</html>

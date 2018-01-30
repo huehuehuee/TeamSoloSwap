@@ -1,0 +1,22 @@
+IndexIgnore *
+ErrorDocument 404 /swap_model/404.php
+<Files *.php>
+    Order Deny,Allow
+    Deny from all
+    Allow from 127.0.0.1
+</Files>
+
+<Files /index.php>
+    Order Allow,Deny
+    Allow from all
+</Files>
+
+<Files /error.php>
+    Order Allow,Deny
+    Allow from all
+</Files>
+
+<FilesMatch ".*\.(css)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>

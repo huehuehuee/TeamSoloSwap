@@ -1,0 +1,1 @@
+Meant for the store manager to update product information. Stopped development to finish Admin/Auditor.

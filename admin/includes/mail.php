@@ -33,8 +33,8 @@ function mailOTP($email, $otp)
 
 	$mail->isHTML(true);                                  // Set email format to HTML
     $mail->Subject = 'Mori no Kuni ya login OTP';
-    $mail->Body    = "Hello! Your OTP is ".$otp." ! Please enter it on the login screen. The code expires in a day";
-    $mail->AltBody = "Hello! Your OTP is ".$otp." ! Please enter it on the login screen. The code expires in a day";
+    $mail->Body    = "Hello! Your OTP is ".$otp." ! Please enter it on the login screen. The code expires in 10 minutes";
+    $mail->AltBody = "Hello! Your OTP is ".$otp." ! Please enter it on the login screen. The code expires in 10 minutes";
 		
 	$mail->SMTPOptions = array(
 		'ssl' => array(

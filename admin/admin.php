@@ -1,7 +1,27 @@
 <?php
   error_reporting(0);
 	include __DIR__."/includes/functions.php";
-	restrictAccess(100, 200); //range of staff IDs
+	restrictAccess(100, 300); //range of staff IDs
+	$time = $_SERVER['REQUEST_TIME'];
+	$timeout_duration = 600;
+	if (isset($_SESSION['LAST_ACTIVITY']) && 
+   ($time - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+    logout();
+}
+  date_default_timezone_set("Asia/Singapore");
+  //24hr clock 
+  if(date('H') >= 9 && date('H') <= 23)  //IF time > 9am && time < 5pm, operate as usual. Else 404
+  {
+	 ; //do nothing
+  }
+  else  
+  {
+	header('HTTP/1.1 404 Not Found');
+	include('../404.php');
+	exit();
+  }
+	
+	
   ?>
 <!DOCTYPE html>
 <html lang="en" class="display">
@@ -49,7 +69,7 @@
  
 <?php
 //Staff account creation
-if($_SESSION['staffRole'] === 'manager') : 
+if(restrictManager()) : 
 //allows only Manager role to see User Account Management tables
 //Create staff accounts
 ?>
@@ -86,6 +106,12 @@ if($_SESSION['staffRole'] === 'manager') :
                 <div class="col-lg-10">
                       Name: <input type="text" class="form-control"  placeholder="name" name="iname" />
                       <p class="help-block">Name of user (no whitespace)</p>
+                    </div>
+                  </div>
+                  <div class="form-group"> 
+                <div class="col-lg-10">
+                      Contact: <input type="number" class="form-control"  placeholder="contact" name="icontact" min=0 />
+                      <p class="help-block">Contact Number</p>
                     </div>
                   </div>
                   <div class="form-group"> 
@@ -163,7 +189,6 @@ if($_SESSION['staffRole'] === 'manager') :
       </form>
 		</table> 
 	</div>
-  <?php //Reset Staff password ?>
   <div class="col-lg-2">
     <table class="table">
       <form action="includes/actions.php" method="post">
@@ -198,6 +223,36 @@ if($_SESSION['staffRole'] === 'manager') :
       </form>
     </table> 
   </div>
+  <div class="col-lg-2">
+    <table class="table">
+      <form action="includes/actions.php" method="post">
+        <input type='hidden' name='ioperation' value='delete' />
+        <th>Delete Staff Account:</th>
+        <tr>
+          <td>
+            <div class="form-group"> 
+              <div class="col-lg-10">
+                    Username: <input type="text" class="form-control"  placeholder="username" name="iusername" />
+                    <p class="help-block">Username</p>
+                  </div>
+                </div>
+                <div class="col-lg-10">
+                  Role:
+                      <select name="irole">
+                        <option value="manager">Manager</option>
+                      </select>
+                      <p class="help-block">Select user role</p>
+                    </div>
+                <div class="form-group">        
+                <div class="col-lg-offset-2 col-lg-10">
+                  <button type="submit" class="btn btn-default">Delete</button>
+                </div>
+              </div>
+          </td>
+        </tr>
+      </form>
+    </table> 
+  </div>
 </div>
 <div class="container-fluid">
     <div class="container">
@@ -209,6 +264,7 @@ if($_SESSION['staffRole'] === 'manager') :
           <th>Username</th>
           <th>Email</th>
           <th>Name</th>
+          <th>Contact</th>
           <th>Role</th>
           <th>Status</th>
         </tr>

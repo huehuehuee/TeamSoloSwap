@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "otp";
-$password = "4scT6eK9BOX7Ck4P";
+$username = "root";
+$password = "";
 $dbname = "bookstore";
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // set Error exception

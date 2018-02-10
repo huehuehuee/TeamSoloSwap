@@ -1,8 +1,8 @@
 <?php
 
 $servername = "localhost";
-$username = "logGen";
-$password = "NDZlO8LKCtLq1COe";
+$username = "root";
+$password = "";
 $dbname = "bookstore";
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // set Error exception

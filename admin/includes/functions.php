@@ -1,8 +1,39 @@
 <?php
 session_start();
 
-//Change database user
-function loginOTP($inputUsername, $inputPassword){
+function my_simple_crypt( $string, $action) //basic encyyption 
+{
+    // you may change these values to your own
+    $secret_key = 'my_simple_secret_key';
+    $secret_iv = 'my_simple_secret_iv';
+ 
+    $output = false;
+    $encrypt_method = "AES-256-CBC";
+    $key = hash( 'sha256', $secret_key );
+    $iv = substr( hash( 'sha256', $secret_iv ), 0, 16 );
+ 
+    if( $action == 'e' ) {
+        $output = base64_encode( openssl_encrypt( $string, $encrypt_method, $key, 0, $iv ) );
+    }
+    else if( $action == 'd' ){
+        $output = openssl_decrypt( base64_decode( $string ), $encrypt_method, $key, 0, $iv );
+    }
+ 
+    return $output;
+}
+
+function logout() //Logs out user and destroy session
+{
+	$_SESSION['Log'] = $_SESSION['staffUser']." has logged out";
+	generateLog();
+
+	session_destroy();
+	header("Location: /swap_model/index.php");
+	exit();
+}
+
+function loginOTP($inputUsername, $inputPassword) //Generate and email with OTP to users email on login
+{
 	try{
 		include __DIR__."/../../dbconn/otp.php";
 		$stmt = $conn->prepare("SELECT username, password, email, status, otpID FROM staff WHERE username = :username");
@@ -70,7 +101,7 @@ function loginOTP($inputUsername, $inputPassword){
 	}
 }
 
-function loginuser ($inputOtp)
+function loginuser ($inputOtp) //Logs in the user 
 {	
 	try{
 		
@@ -126,7 +157,7 @@ function loginuser ($inputOtp)
 	}
 }
 
-function expireOTP()
+function expireOTP() //Renders OTP unusable 
 {
 	try{
 	include __DIR__."/../../dbconn/otp.php";
@@ -142,7 +173,7 @@ function expireOTP()
 	}
 	
 }
-function restrictAccess($start, $end)
+function restrictAccess($start, $end) //configure range of staff IDs to restrict
 {
 	if($_SESSION['userID'] > $end || $_SESSION['userID'] < $start) //Define range for staff accounts
 	{
@@ -152,9 +183,13 @@ function restrictAccess($start, $end)
 	}
 }
 
-function restrictManager()
+function restrictManager() //configure admin and manager access
 {
-	if($_SESSION['staffRole'] !== 'manager')
+	if($_SESSION['staffRole'] == 'manager' || $_SESSION['staffRole'] == 'admin')
+	{
+		return true;
+	}
+	else
 	{
 		header('HTTP/1.1 404 Not Found');
 		include('../404.php');
@@ -162,7 +197,7 @@ function restrictManager()
 	}
 }
 
-function restrictAuditor()
+function restrictAuditor() //configure auditor access
 {
 	if($_SESSION['staffRole'] !== 'auditor')
 	{
@@ -172,22 +207,28 @@ function restrictAuditor()
 	}
 }
 
+function relax() //does nothing
+{
+    ;
+}
 function viewstaff() //works
 {
 	restrictManager();
 	include __DIR__."/../../dbconn/manager.php";
 	try{
-		$stmt = $conn->prepare("SELECT username, email, name, role, status FROM staff WHERE id >= 100");
+		$stmt = $conn->prepare("SELECT username, email, name, contact_no, role, status FROM staff WHERE id >= 100");
 		$stmt->execute();
 		$result = $stmt->fetchAll();
 		foreach($result as $row)
 		{
 		  echo "<tr>";
-		  echo "<td>".$row['username']."</td>";
-		  echo "<td>".$row['email']."</td>";
-		  echo "<td>".$row['name']."</td>";		  
-		  echo "<td>".$row['role']."</td>";
-		  echo "<td>".$row['status']."</td>";
+		  echo "<td>".htmlspecialchars($row['username'])."</td>";
+		  echo "<td>".htmlspecialchars($row['email'])."</td>";
+		  echo "<td>".htmlspecialchars($row['name'])."</td>";
+		  $contact = my_simple_crypt($row['contact_no'], 'd');
+		  echo "<td>".htmlspecialchars($contact)."</td>";
+		  echo "<td>".htmlspecialchars($row['role'])."</td>";
+		  echo "<td>".htmlspecialchars($row['status'])."</td>";
 		}
 	}
 	catch(PDOException $e) //If error message caught, expected to be duplicate Primary Key Errors
@@ -207,12 +248,12 @@ function viewbooks() //Admin view
 		foreach($result as $row)
 		{
 		  echo "<tr>";
-		  echo "<td>".$row['serialNum']."</td>";
-		  echo "<td>".$row['title']."</td>";
-		  echo "<td>".$row['author']."</td>";		  
-		  echo "<td>".$row['costPrice']."</td>";
-		  echo "<td>".$row['markUp']."</td>";
-		  echo "<td>".$row['salePrice']."</td>";
+		  echo "<td>".htmlspecialchars($row['serialNum'])."</td>";
+		  echo "<td>".htmlspecialchars($row['title'])."</td>";
+		  echo "<td>".htmlspecialchars($row['author'])."</td>";		  
+		  echo "<td>".htmlspecialchars($row['costPrice'])."</td>";
+		  echo "<td>".htmlspecialchars($row['markUp'])."</td>";
+		  echo "<td>".htmlspecialchars($row['salePrice'])."</td>";
 		}
 	}
 	catch(PDOException $e) //If error message caught, expected to be duplicate Primary Key Errors
@@ -231,14 +272,14 @@ function displaybooks() //Customer view
 		foreach($result as $row)
 		{
 		  echo "<tr>";
-		  echo "<td>".$row['serialNum']."</td>";
-		  echo "<td>".$row['title']."</td>";
-		  echo "<td>".$row['author']."</td>";
-		  echo "<td>".$row['summary']."</td>";
-		  echo "<td>".$row['pages']."</td>";
-		  echo "<td>".$row['publisher']."</td>";
-		  echo "<td>".$row['language']."</td>";
-		  echo "<td>$".$row['salePrice']."</td>";
+		  echo "<td>".htmlspecialchars($row['serialNum'])."</td>";
+		  echo "<td>".htmlspecialchars($row['title'])."</td>";
+		  echo "<td>".htmlspecialchars($row['author'])."</td>";
+		  echo "<td>".htmlspecialchars($row['summary'])."</td>";
+		  echo "<td>".htmlspecialchars($row['pages'])."</td>";
+		  echo "<td>".htmlspecialchars($row['publisher'])."</td>";
+		  echo "<td>".htmlspecialchars($row['language'])."</td>";
+		  echo "<td>$".htmlspecialchars($row['salePrice'])."</td>";
 		  ?>
 		  <td>
                 <form class="form-inline" action="#" method="post">
@@ -259,27 +300,31 @@ function displaybooks() //Customer view
 	}
 	
 }
-function addstaff ($inputUsername, $inputPassword, $inputEmail, $inputName, $inputRole, $inputStatus) //Logged
+function addstaff ($inputUsername, $inputPassword, $inputEmail, $inputName, $inputContact, $inputRole, $inputStatus) //Staff creation
 {
-	restrictManager(); 
+	restrictManager();
 	include __DIR__."/../../dbconn/manager.php";
 	try {
 		$hashPass = password_hash($inputPassword, PASSWORD_BCRYPT);
 		//prepare sql and bind parameters
-		$stmt = $conn->prepare("INSERT INTO staff (username, password, email, name, role, status, otpID) VALUES (:username, :password, :email, :name, :role, :status, :otpID)");
+		$stmt = $conn->prepare("INSERT INTO staff (username, password, email, name, contact_no, role, status, otpID) VALUES (:username, :password, :email, :name, :contact_no, :role, :status, :otpID)");
 		$stmt->bindParam(':username', $username);
 		$stmt->bindParam(':password', $password);
 		$stmt->bindParam(':email', $email);
 		$stmt->bindParam(':name', $name);
+		$stmt->bindParam(':contact_no', $contact_no);
 		$stmt->bindParam(':role', $role);
 		$stmt->bindParam(':status', $status);
 		$stmt->bindParam(':otpID', $otpID);
 		
 		//Define parameters
+		$contact = my_simple_crypt($inputContact,'e' );
+		
 		$username = $inputUsername;
 		$password = $hashPass;
 		$email = $inputEmail;
 		$name = $inputName;
+		$contact_no = $contact;
 		$role = $inputRole;
 		$status = $inputStatus;
 		$otpID = rand(100000000, 999999999);
@@ -301,7 +346,7 @@ function addstaff ($inputUsername, $inputPassword, $inputEmail, $inputName, $inp
 $conn = null;
 }
 
-function updatestatus ($inputUsername, $inputStatus) //logged
+function updatestatus ($inputUsername, $inputStatus) //Activate or disable staff account
 {
 	restrictManager();
 	include __DIR__."/../../dbconn/manager.php";
@@ -328,7 +373,33 @@ function updatestatus ($inputUsername, $inputStatus) //logged
 $conn = null;
 }
 
-function updatepwd ($inputUsername, $inputPassword) //logged
+function deletestaff($inputUsername) //Remove staff account. Only works for account with 'manager' role.
+{
+	restrictManager(); 
+	include __DIR__."/../../dbconn/manager.php";
+	try {
+		//prepare sql and bind parameters
+		$stmt = $conn->prepare("DELETE FROM staff WHERE username = :username AND role = :role");
+		$stmt->bindParam(':username', $username);
+		$stmt->bindParam(':role', $role);
+		$username = $inputUsername;
+		$role = 'manager';
+		$stmt->execute();
+		$_SESSION['Log'] = $_SESSION['staffUser']." has deleted the account Username: ".$inputUsername."";
+		generateLog();
+		header("Location: ../admin.php");
+		exit();
+	}
+	catch(PDOException $e) //If error message caught, rollback both creation and log query
+		{
+		$_SESSION['staffregister'] = "Failed. "; 
+		header("Location: ../admin.php");
+		exit();
+		}
+	
+}
+
+function updatepwd ($inputUsername, $inputPassword) //Change the password of any staff account
 {
 	restrictManager();
 	include __DIR__."/../../dbconn/manager.php";
@@ -358,7 +429,7 @@ $conn = null;
 	
 }
 
-function checkOTP()
+function checkOTP() //Performs a match of user input OTP against generated OTP
 {
 	if(isset($_SESSION['otp_try']) && $_SESSION['otp_try'])
 	{
@@ -370,7 +441,7 @@ function checkOTP()
 	}
 }
 
-function viewlogs() // Restricted to auditor
+function viewlogs() // Restricted to auditor, user activity logs.
 {
 	restrictAuditor();
 	include __DIR__."/../../dbconn/auditor.php";
@@ -381,16 +452,16 @@ function viewlogs() // Restricted to auditor
 		foreach($result as $row)
 		{
 		  echo "<tr>";
-		  echo "<td>".$row['logID']."</td>";
-		  echo "<td>".$row['account_id']."</td>";
-		  echo "<td>".$row['name']."</td>";
-		  echo "<td>".$row['role']."</td>";
-		  echo "<td>".$row['status']."</td>";
-		  echo "<td>".$row['content']."</td>";
-		  echo "<td>".$row['timestamp']."</td>";
-		  echo "<td>".$row['auditor_id']."</td>";
-		  echo "<td>".$row['comment']."</td>";
-		  echo "<td>".$row['time']."</td>";
+		  echo "<td>".htmlspecialchars($row['logID'])."</td>";
+		  echo "<td>".htmlspecialchars($row['account_id'])."</td>";
+		  echo "<td>".htmlspecialchars($row['name'])."</td>";
+		  echo "<td>".htmlspecialchars($row['role'])."</td>";
+		  echo "<td>".htmlspecialchars($row['status'])."</td>";
+		  echo "<td>".htmlspecialchars($row['content'])."</td>";
+		  echo "<td>".htmlspecialchars($row['timestamp'])."</td>";
+		  echo "<td>".htmlspecialchars($row['auditor_id'])."</td>";
+		  echo "<td>".htmlspecialchars($row['comment'])."</td>";
+		  echo "<td>".htmlspecialchars($row['time'])."</td>";
 		}
 	}
 	catch(PDOException $e) //If error message caught, expected to be duplicate Primary Key Errors
@@ -400,7 +471,7 @@ function viewlogs() // Restricted to auditor
 	
 }
 
-function comment($inputID, $inputComment, $inputLogID) // Restricted to auditor. logged
+function comment($inputID, $inputComment, $inputLogID) // Restricted to auditor. Append comments to a log entry.
 {
 	restrictAuditor();
 	include __DIR__."/../../dbconn/auditor.php";
@@ -428,7 +499,7 @@ function comment($inputID, $inputComment, $inputLogID) // Restricted to auditor.
 $conn = null;
 }
 
-function generateLog() 
+function generateLog() //Generates a log entry when called
 {
 	include __DIR__."/../../dbconn/logger.php";
 	$log = $_SESSION['Log'];

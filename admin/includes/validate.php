@@ -6,7 +6,7 @@ function validateOps($operation)
 	if(!empty($operation))
 	{
 		//If operation  
-		if ($operation === 'create' || $operation === 'update' || $operation === 'login' || $operation === 'otp' || $operation === 'password' || $operation === 'comment')
+		if ($operation === 'create' || $operation === 'update' || $operation === 'delete' || $operation === 'login' || $operation === 'otp' || $operation === 'password' || $operation === 'comment')
 		{			
 			return false;
 		}
@@ -112,7 +112,7 @@ function validateID($id)
 	//Matches for numbers only
 	if (empty($id) || !preg_match("/^([0-9])+\z/", $id)) 
 	{
-		$_SESSION['logsIDErr'] = "Invalid inputs. LogID";
+		$_SESSION['logsIDErr'] = "Invalid inputs. Numbers";
 		return false;
 	}
 	else

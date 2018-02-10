@@ -11,6 +11,21 @@
   <script src='https://www.google.com/recaptcha/api.js'></script>
   <?php
   include __DIR__."/includes/functions.php";
+  date_default_timezone_set("Asia/Singapore");
+  //24hr clock 
+  if(date('H') >= 9 && date('H') <= 23)  //IF time > 9am && time < 5pm, operate as usual. Else 404
+  {
+	 ; //do nothing
+  }
+  else  
+  {
+	header('HTTP/1.1 404 Not Found');
+	include('../404.php');
+	exit();
+  }
+
+
+
   ?>
 </head>
 <body>

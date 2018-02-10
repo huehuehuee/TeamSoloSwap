@@ -1,8 +1,8 @@
 <?php
 
 $servername = "localhost";
-$username = "auditor";
-$password = "PAzX1SNwIyLclD2t";
+$username = "root";
+$password = "";
 $dbname = "bookstore";
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // set Error exception

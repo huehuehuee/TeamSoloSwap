@@ -5,7 +5,7 @@ function cleanInt($input)
 	if(isset($input))
 	{
 		//get rid of html, php tags. Remove whitespace and beginning and end of input
-		$output = htmlspecialchars(strip_tags(trim($input), ENT_NOQUOTES)); 
+		$output = strip_tags(trim($input)); 
 
 		$output2 = (int)$output;
 		$output3 = abs($output2);
@@ -25,7 +25,8 @@ function cleanString($input)
 {
 	if(isset($input))
 	{
-		$output = htmlspecialchars(strip_tags(trim($input), ENT_NOQUOTES));
+		$output = strip_tags(trim($input));
+		
 		return $output;
 	}
 }

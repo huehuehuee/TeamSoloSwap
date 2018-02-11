@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+- phpMyAdmin XML Dump
+- version 4.7.4
+- https://www.phpmyadmin.net
+-
+- Host: 127.0.0.1
+- Generation Time: Feb 10, 2018 at 09:45 AM
+- Server version: 10.1.28-MariaDB
+- PHP Version: 7.1.10
+-->
+
+<pma_xml_export version="1.0" xmlns:pma="https://www.phpmyadmin.net/some_doc_url/">
+    <!--
+    - Structure schemas
+    -->
+    <pma:structure_schemas>
+        <pma:database name="bookstore" collation="latin1_swedish_ci" charset="latin1">
+            <pma:view name="bookprices">
+                CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bookstore`.`bookprices` AS select `bookstore`.`books`.`serialNum` AS `serialNum`,`bookstore`.`books`.`title` AS `title`,`bookstore`.`books`.`author` AS `author`,`bookstore`.`pricingplan`.`costPrice` AS `costPrice`,`bookstore`.`pricingplan`.`markUp` AS `markUp`,`bookstore`.`pricingplan`.`salePrice` AS `salePrice` from (`bookstore`.`books` join `bookstore`.`pricingplan` on((`bookstore`.`books`.`serialNum` = `bookstore`.`pricingplan`.`serialNum`)));
+            </pma:view>
+            <pma:table name="books">
+                CREATE TABLE `books` (
+                  `serialNum` bigint(15) NOT NULL,
+                  `title` varchar(100) NOT NULL,
+                  `author` varchar(50) NOT NULL,
+                  `summary` varchar(800) NOT NULL,
+                  `pages` int(4) NOT NULL,
+                  `publisher` varchar(50) NOT NULL,
+                  `language` varchar(40) NOT NULL,
+                  PRIMARY KEY (`serialNum`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:view name="display">
+                CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bookstore`.`display` AS select `bookstore`.`books`.`serialNum` AS `serialNum`,`bookstore`.`books`.`title` AS `title`,`bookstore`.`books`.`author` AS `author`,`bookstore`.`books`.`summary` AS `summary`,`bookstore`.`books`.`pages` AS `pages`,`bookstore`.`books`.`publisher` AS `publisher`,`bookstore`.`books`.`language` AS `language`,`bookstore`.`pricingplan`.`salePrice` AS `salePrice` from (`bookstore`.`books` join `bookstore`.`pricingplan` on((`bookstore`.`books`.`serialNum` = `bookstore`.`pricingplan`.`serialNum`)));
+            </pma:view>
+            <pma:table name="logs">
+                CREATE TABLE `logs` (
+                  `logID` int(11) NOT NULL AUTO_INCREMENT,
+                  `account_id` int(11) NOT NULL,
+                  `content` varchar(1000) NOT NULL,
+                  `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  `auditor_id` int(11) NOT NULL,
+                  `comment` varchar(500) NOT NULL,
+                  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                  PRIMARY KEY (`logID`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:view name="logsview">
+                CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bookstore`.`logsview` AS select `bookstore`.`logs`.`logID` AS `logID`,`bookstore`.`logs`.`account_id` AS `account_id`,`bookstore`.`staff`.`name` AS `name`,`bookstore`.`staff`.`role` AS `role`,`bookstore`.`staff`.`status` AS `status`,`bookstore`.`logs`.`content` AS `content`,`bookstore`.`logs`.`timestamp` AS `timestamp`,`bookstore`.`logs`.`auditor_id` AS `auditor_id`,`bookstore`.`logs`.`comment` AS `comment`,`bookstore`.`logs`.`time` AS `time` from (`bookstore`.`logs` join `bookstore`.`staff` on((`bookstore`.`logs`.`account_id` = `bookstore`.`staff`.`id`))) order by `bookstore`.`logs`.`logID`;
+            </pma:view>
+            <pma:table name="otp_expiry">
+                CREATE TABLE `otp_expiry` (
+                  `otp` int(6) NOT NULL,
+                  `expired` int(1) NOT NULL,
+                  `creation_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+                  `otpID` int(11) NOT NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="pricingplan">
+                CREATE TABLE `pricingplan` (
+                  `serialNum` bigint(15) NOT NULL,
+                  `costPrice` decimal(5,2) NOT NULL,
+                  `markUp` decimal(5,2) NOT NULL,
+                  `salePrice` decimal(5,2) NOT NULL,
+                  PRIMARY KEY (`serialNum`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="staff">
+                CREATE TABLE `staff` (
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `username` varchar(100) NOT NULL,
+                  `password` varchar(100) NOT NULL,
+                  `email` varchar(100) NOT NULL,
+                  `name` varchar(100) NOT NULL,
+                  `contact_no` varchar(100) NOT NULL,
+                  `role` varchar(100) NOT NULL,
+                  `status` varchar(30) NOT NULL,
+                  `otpID` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `username` (`username`),
+                  UNIQUE KEY `otpID` (`otpID`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=latin1;
+            </pma:table>
+            <pma:table name="users">
+                CREATE TABLE `users` (
+                  `id` int(11) NOT NULL,
+                  `firstname` varchar(50) NOT NULL,
+                  `lastname` varchar(50) NOT NULL,
+                  `address` varchar(100) NOT NULL,
+                  `email` varchar(100) NOT NULL,
+                  `password` varchar(256) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `email` (`email`),
+                  UNIQUE KEY `email_2` (`email`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            </pma:table>
+        </pma:database>
+    </pma:structure_schemas>
+
+    <!--
+    - Database: 'bookstore'
+    -->
+    <database name="bookstore">
+        <!-- Table books -->
+        <table name="books">
+            <column name="serialNum">1</column>
+            <column name="title">The Midnight Line</column>
+            <column name="author">Child, Lee</column>
+            <column name="summary"> Jack Reacher takes an aimless stroll past a pawn shop in a small Midwestern town. In the window he sees a West Point class ring from 2005. Reacher's a West Pointer too, and he knows what she went through to get it. Reacher tracks the ring back to its owner, step by step, down a criminal trail leading west. If she's OK, he'll walk away. </column>
+            <column name="pages">400</column>
+            <column name="publisher"> Bantam Press (GB) </column>
+            <column name="language">English</column>
+        </table>
+        <table name="books">
+            <column name="serialNum">2</column>
+            <column name="title">Origin</column>
+            <column name="author">Brown, Dan</column>
+            <column name="summary"> Sunday Times #1 BestsellerNew York Times #1 BestellerThe spellbinding new Robert Langdon novel from the author of The Da Vinci Code. On a trail marked only by enigmatic symbols and elusive modern art, Langdon and Vidal uncover the clues that will bring them face-to-face with a world-shaking truth that has remained buried - until now. </column>
+            <column name="pages">480</column>
+            <column name="publisher"> Bantam Press (GB) </column>
+            <column name="language">English</column>
+        </table>
+        <table name="books">
+            <column name="serialNum">3</column>
+            <column name="title">The Subtle Art of Not Giving a F*ck : A Counterintuitive Approach to Living a Good Life </column>
+            <column name="author">Manson, Mark</column>
+            <column name="summary">In this generation-defining self-help guide, a superstar blogger cuts through the crap to show us how to stop trying to be &quot;positive&quot; all the time so that we can truly become better, happier people. </column>
+            <column name="pages">304</column>
+            <column name="publisher">Harperone (US) </column>
+            <column name="language">English</column>
+        </table>
+        <table name="books">
+            <column name="serialNum">4</column>
+            <column name="title">Delete 1</column>
+            <column name="author">Nah</column>
+            <column name="summary"></column>
+            <column name="pages">0</column>
+            <column name="publisher"></column>
+            <column name="language"></column>
+        </table>
+        <!-- Table logs -->
+        <table name="logs">
+            <column name="logID">177</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 13:54:04</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 13:54:04</column>
+        </table>
+        <table name="logs">
+            <column name="logID">178</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged out</column>
+            <column name="timestamp">2018-02-02 13:55:23</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 13:55:23</column>
+        </table>
+        <table name="logs">
+            <column name="logID">179</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 13:57:00</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 13:57:00</column>
+        </table>
+        <table name="logs">
+            <column name="logID">180</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged out</column>
+            <column name="timestamp">2018-02-02 13:58:13</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 13:58:13</column>
+        </table>
+        <table name="logs">
+            <column name="logID">181</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 13:58:47</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 13:58:47</column>
+        </table>
+        <table name="logs">
+            <column name="logID">182</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged out</column>
+            <column name="timestamp">2018-02-02 13:58:50</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 13:58:50</column>
+        </table>
+        <table name="logs">
+            <column name="logID">183</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 14:01:05</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:01:05</column>
+        </table>
+        <table name="logs">
+            <column name="logID">184</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has Disabled the account Username: jenny .</column>
+            <column name="timestamp">2018-02-02 14:01:15</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:01:15</column>
+        </table>
+        <table name="logs">
+            <column name="logID">185</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has created the account Username: hmmm Role: manager Status: Activated .</column>
+            <column name="timestamp">2018-02-02 14:01:50</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:01:50</column>
+        </table>
+        <table name="logs">
+            <column name="logID">186</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged out</column>
+            <column name="timestamp">2018-02-02 14:05:23</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:05:23</column>
+        </table>
+        <table name="logs">
+            <column name="logID">187</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 14:07:11</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:07:11</column>
+        </table>
+        <table name="logs">
+            <column name="logID">188</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has created the account Username: wwww Role: manager Status: Activated .</column>
+            <column name="timestamp">2018-02-02 14:08:53</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:08:53</column>
+        </table>
+        <table name="logs">
+            <column name="logID">189</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has created the account Username: zzzz Role: auditor Status: Activated .</column>
+            <column name="timestamp">2018-02-02 14:10:50</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:10:50</column>
+        </table>
+        <table name="logs">
+            <column name="logID">190</column>
+            <column name="account_id">127</column>
+            <column name="content">Administrator has logged out</column>
+            <column name="timestamp">2018-02-02 14:11:47</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:11:47</column>
+        </table>
+        <table name="logs">
+            <column name="logID">191</column>
+            <column name="account_id">138</column>
+            <column name="content">tonyjs445 has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 14:12:14</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:12:14</column>
+        </table>
+        <table name="logs">
+            <column name="logID">192</column>
+            <column name="account_id">138</column>
+            <column name="content">tonyjs445 has logged out</column>
+            <column name="timestamp">2018-02-02 14:13:23</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:13:23</column>
+        </table>
+        <table name="logs">
+            <column name="logID">193</column>
+            <column name="account_id">138</column>
+            <column name="content">tonyjs445 has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 14:15:50</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:15:50</column>
+        </table>
+        <table name="logs">
+            <column name="logID">194</column>
+            <column name="account_id">138</column>
+            <column name="content">tonyjs445 has logged out</column>
+            <column name="timestamp">2018-02-02 14:17:17</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:17:17</column>
+        </table>
+        <table name="logs">
+            <column name="logID">195</column>
+            <column name="account_id">138</column>
+            <column name="content">tonyjs445 has logged in to the staff page.</column>
+            <column name="timestamp">2018-02-02 14:18:00</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:18:00</column>
+        </table>
+        <table name="logs">
+            <column name="logID">196</column>
+            <column name="account_id">138</column>
+            <column name="content">tonyjs445 has logged out</column>
+            <column name="timestamp">2018-02-02 14:19:16</column>
+            <column name="auditor_id">0</column>
+            <column name="comment"></column>
+            <column name="time">2018-02-02 14:19:16</column>
+        </table>
+        <!-- Table otp_expiry -->
+        <table name="otp_expiry">
+            <column name="otp">955873</column>
+            <column name="expired">0</column>
+            <column name="creation_time">2018-01-30 20:57:15</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">336362</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-01-30 21:02:57</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">481009</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-01-30 21:08:57</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">881529</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-01-30 21:17:10</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">356679</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-01-30 21:25:11</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">207515</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-01-30 22:32:20</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">717104</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-01-30 23:28:00</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">149174</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-01-31 12:43:23</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">846096</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 02:52:21</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">200217</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 02:54:13</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">400995</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 02:55:57</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">932587</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 03:03:39</column>
+            <column name="otpID">835313930</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">985866</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 03:07:59</column>
+            <column name="otpID">835313930</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">911116</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 03:08:40</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">173527</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 03:21:27</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">959279</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 03:45:59</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">418629</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 13:34:58</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">127589</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 13:50:48</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">941091</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 13:53:41</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">713922</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 13:56:47</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">329283</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 13:58:38</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">438735</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 14:00:45</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">893930</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 14:06:44</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">693221</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 14:12:05</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">266276</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 14:15:44</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <table name="otp_expiry">
+            <column name="otp">519944</column>
+            <column name="expired">1</column>
+            <column name="creation_time">2018-02-02 14:17:35</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <!-- Table pricingplan -->
+        <table name="pricingplan">
+            <column name="serialNum">0</column>
+            <column name="costPrice">20.00</column>
+            <column name="markUp">33.50</column>
+            <column name="salePrice">40.00</column>
+        </table>
+        <table name="pricingplan">
+            <column name="serialNum">1</column>
+            <column name="costPrice">20.50</column>
+            <column name="markUp">110.00</column>
+            <column name="salePrice">43.05</column>
+        </table>
+        <table name="pricingplan">
+            <column name="serialNum">2</column>
+            <column name="costPrice">12.00</column>
+            <column name="markUp">110.00</column>
+            <column name="salePrice">25.20</column>
+        </table>
+        <table name="pricingplan">
+            <column name="serialNum">3</column>
+            <column name="costPrice">23.45</column>
+            <column name="markUp">33.50</column>
+            <column name="salePrice">31.31</column>
+        </table>
+        <table name="pricingplan">
+            <column name="serialNum">4</column>
+            <column name="costPrice">12.30</column>
+            <column name="markUp">120.00</column>
+            <column name="salePrice">27.06</column>
+        </table>
+        <!-- Table staff -->
+        <table name="staff">
+            <column name="id">0</column>
+            <column name="username">loginFailure</column>
+            <column name="password">Tw2NaKZGL9l@%#@%DsHfGERL5MZmE5hrc&lt;&lt;!!&gt;&gt;4ed2dxb303w1pOVcInDfOE83a1X7NuZyuTtl4YyK#&amp;%&amp;#%&amp;bHx3oZHnYpDI</column>
+            <column name="email">none@failure.com</column>
+            <column name="name">loginFailure</column>
+            <column name="contact_no">dDhhT0NyWUhGNm5SbXZDVWQ1Y080Zz09</column>
+            <column name="role">LoginFailure Placeholder</column>
+            <column name="status">Disabled</column>
+            <column name="otpID">0</column>
+        </table>
+        <table name="staff">
+            <column name="id">127</column>
+            <column name="username">Administrator</column>
+            <column name="password">$2y$10$R1hQeexF5zdEcMO1BaoJfeGM5r3qD1n1lXfqhM/CJ57OkydMFrRVS</column>
+            <column name="email">testswaphere2@gmail.com</column>
+            <column name="name">Admin</column>
+            <column name="contact_no">WDVDZXpCWVVqNWNkTHJVTUZQMnpmQT09</column>
+            <column name="role">admin</column>
+            <column name="status">Activated</column>
+            <column name="otpID">123654789</column>
+        </table>
+        <table name="staff">
+            <column name="id">138</column>
+            <column name="username">tonyjs445</column>
+            <column name="password">$2y$10$.f7b0WyXieFWBewJHrO8Our65YbD2dP7R.Oa6L9SkJAFv4nyO9HZ2</column>
+            <column name="email">testmyswaphere@gmail.com</column>
+            <column name="name">Jun</column>
+            <column name="contact_no">VkFSSWhsS3BudnpvbmFyNVJnUGRJUT09</column>
+            <column name="role">auditor</column>
+            <column name="status">Activated</column>
+            <column name="otpID">123456789</column>
+        </table>
+        <table name="staff">
+            <column name="id">140</column>
+            <column name="username">manager</column>
+            <column name="password">$2y$10$NOIXXCo3GFUXv0WOiv5fIe7bnZsGYVUryHhWYIyA6qIBM8Uv.UUXm</column>
+            <column name="email">burner8889@gmail.com</column>
+            <column name="name">tony</column>
+            <column name="contact_no">WHZHMFVsOGVYOGYzcnQ1TjRYVnZkdz09</column>
+            <column name="role">manager</column>
+            <column name="status">Activated</column>
+            <column name="otpID">835313930</column>
+        </table>
+        <table name="staff">
+            <column name="id">143</column>
+            <column name="username">gencry2</column>
+            <column name="password">$2y$10$m1SoqXLcJt/4t3QFjmGJt.DOlIHK08Wxz/.NwhwcK5WKTbdSFeNwC</column>
+            <column name="email">testswaphere2@gmail.com</column>
+            <column name="name">gencr</column>
+            <column name="contact_no">R0dmU3hnTEFIeEJDZytTNlRXMXpLdz09</column>
+            <column name="role">auditor</column>
+            <column name="status">Activated</column>
+            <column name="otpID">676198166</column>
+        </table>
+        <table name="staff">
+            <column name="id">191</column>
+            <column name="username">deleteme2</column>
+            <column name="password">delete me</column>
+            <column name="email">delete me</column>
+            <column name="name">delete me</column>
+            <column name="contact_no">delete me</column>
+            <column name="role">manager</column>
+            <column name="status">delete me</column>
+            <column name="otpID">12345785</column>
+        </table>
+        <table name="staff">
+            <column name="id">193</column>
+            <column name="username">jenny</column>
+            <column name="password">$2y$10$6Og7KmR6LeQhdqZmRAe7e.9QQHyybtSNrsk.QwMw7D0c36ReDDAlS</column>
+            <column name="email">jenyy@gmail.com</column>
+            <column name="name">Jen</column>
+            <column name="contact_no">TERoRitXbFZNNG05T29pRkluZzRzZz09</column>
+            <column name="role">auditor</column>
+            <column name="status">Disabled</column>
+            <column name="otpID">571602746</column>
+        </table>
+        <table name="staff">
+            <column name="id">196</column>
+            <column name="username">hmmm</column>
+            <column name="password">$2y$10$Y4SuOZRJNIVL.6MexixzvujgJd4rIC7AozX3C98QyAfvG4Tq4liEm</column>
+            <column name="email">wattte@gmail.com</column>
+            <column name="name">awtwwaer</column>
+            <column name="contact_no">ME9kOE15WXNRc0EwREV5RDJWelN2dz09</column>
+            <column name="role">manager</column>
+            <column name="status">Activated</column>
+            <column name="otpID">765758948</column>
+        </table>
+        <table name="staff">
+            <column name="id">197</column>
+            <column name="username">wwww</column>
+            <column name="password">$2y$10$6FVbqU69Bl/gNj6kPdQMBehujOF5QHvyfHDHnuCqlv/AG5vX4nsIW</column>
+            <column name="email">tonytan@gmail.com</column>
+            <column name="name">tonyyyyy</column>
+            <column name="contact_no">N0FjS1crK0Y0WHpibVpqYzY3Z3JnUT09</column>
+            <column name="role">manager</column>
+            <column name="status">Activated</column>
+            <column name="otpID">591533647</column>
+        </table>
+        <table name="staff">
+            <column name="id">199</column>
+            <column name="username">zzzz</column>
+            <column name="password">$2y$10$LgLSXP4pi3NhaPr9mFdfA.5znWK47a6LyGPBqX0uy06yshvAWDjsG</column>
+            <column name="email">twarwerawr@gmail.com</column>
+            <column name="name">tawrwrwar</column>
+            <column name="contact_no">eXl4amtmUWs5MXE2V042dGhYOWdvQT09</column>
+            <column name="role">auditor</column>
+            <column name="status">Activated</column>
+            <column name="otpID">648866610</column>
+        </table>
+        <!-- Table users -->
+        <table name="users">
+            <column name="id">166799227</column>
+            <column name="firstname">Farry</column>
+            <column name="lastname">Jr</column>
+            <column name="address">Test Blk 413 # 18-99</column>
+            <column name="email">burner988@gmail.com</column>
+            <column name="password">$2y$10$0IqQLJ2xABvW8VM4/4Me5e/moL0oE4/XDQQBUF/XN0voBPBsAqTeO</column>
+        </table>
+        <table name="users">
+            <column name="id">457553488</column>
+            <column name="firstname">Bob</column>
+            <column name="lastname">Fam</column>
+            <column name="address">123 Drive</column>
+            <column name="email">test@gmail.com</column>
+            <column name="password">$2y$10$dA3J8n7zoIq8oP1lvpMVPuZIBKoXyp5vDj9CMqd3Qdbhqae48ZFz.</column>
+        </table>
+    </database>
+</pma_xml_export>
